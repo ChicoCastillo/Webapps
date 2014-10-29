@@ -13,6 +13,8 @@ module.exports = {
 	twitter: {
 		clientID: process.env.TWITTER_KEY || 'TLMVkVzLc31fE6NGluyk30aPK',
 		clientSecret: process.env.TWITTER_SECRET || '9RHCIaiuIwlThmHuZqbM9b8IMWaY0WAqQmV32fVmqLJf26A2cR',
+		access_token: process.env.access_token || '481384292-er40MHCi5zA4IbbfgLhMtKEXd8fMWoRrHSIwQsca',
+		access_token_secret: process.env.access_token_secret || 'iOrlnuzQJH850koN7npB8gWp6TaSNiFu966mdMhf8TaW1',
 		callbackURL: 'http://localhost:3000/auth/twitter/callback'
 	},
 	google: {

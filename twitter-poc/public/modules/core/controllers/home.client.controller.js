@@ -19,6 +19,11 @@ $scope.submit= function(){
 
 Socketclient.emit('clickhandler',$scope.data);
 
+Socketclient.emit('getTweets',$scope.data,function(result){
+    console.log(result);
+   $scope.graphData = result;
+   });
+
 };
 
 	}

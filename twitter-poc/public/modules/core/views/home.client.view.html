@@ -1,5 +1,7 @@
 <section data-ng-controller="HomeController">
+
 	This is the rulesware test
+
 
 <div ng-show="islogged">
 
@@ -8,6 +10,14 @@
 	{{input1}}
 
 	<input type="submit" ng-click="submit()" >
+	 <div>
+    <ul ng-repeat="record in graphData">
+      <li>User: {{record.user}}, Date: {{record.date}}, Count: {{record.count}}<li>
+    </ul>
+  </div>
+<br/>
+	
+
 </div>
 
 

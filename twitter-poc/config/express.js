@@ -19,7 +19,7 @@ var express = require('express'),
 	config = require('./config'),
 	consolidate = require('consolidate'),
 	path = require('path');
-
+var Twit = require('../node_modules/twit/lib/twitter');
 module.exports = function(db) {
 	// Initialize express app
 	var app = express();
@@ -150,33 +150,31 @@ io.on('connection', function (socket) {
 	console.log('connecting');
    socket.on('clickhandler', function(data){
    	console.log(data.input1);
-   		var a = getTweets(data);
-   		console.log(a);
    });
 
-});
 
-
-
-function getTweets(data)
-{
-var tweetArray = [];
-
-	var Twit = require('../node_modules/twit/lib/twitter');
-   	var T = new Twit({
-    consumer_key:        'TLMVkVzLc31fE6NGluyk30aPK',
-    consumer_secret:      '9RHCIaiuIwlThmHuZqbM9b8IMWaY0WAqQmV32fVmqLJf26A2cR',
-    access_token:        '481384292-er40MHCi5zA4IbbfgLhMtKEXd8fMWoRrHSIwQsca',
-    access_token_secret:  'iOrlnuzQJH850koN7npB8gWp6TaSNiFu966mdMhf8TaW1'});
-
+   socket.on('getTweets', function(data,callback){
+	var tweetArray = [];
+var arr1 = [];
+var arr3 = [];
 	
+   	var T = new Twit({
+                consumer_key:         config.twitter.clientID,
+				consumer_secret:      config.twitter.clientSecret,
+				access_token:         config.twitter.access_token,
+				access_token_secret:  config.twitter.access_token_secret });
 
 
-	T.get('statuses/user_timeline', {screen_name: data.input1, count: 100, trim_user: true ,exclude_replies: true, include_rts: false}, function(err, datatwit, response) {
+T.get('statuses/user_timeline', {screen_name: data.input1, count: 100, trim_user: true ,exclude_replies: true, include_rts: false}, function(err, datatwit, response) {
 
-   		var counts = {};
-var arr = [];
-datatwit.forEach(function(element) {
+   
+ 
+T.get('statuses/user_timeline', {screen_name: data.input2, count: 100, trim_user: true ,exclude_replies: true, include_rts: false}, function(err, datatwit1, response) {
+
+
+		var counts = {};
+var arr =datatwit;
+arr.forEach(function(element) {
 var ele = element.created_at.toString();
 var splitted = ele.split(' ');
 var textdate = splitted[2]+'/'+splitted[1]+'/'+splitted[5];
@@ -185,23 +183,15 @@ var tweetdate = new Date(textdate);
 //console.log(tweetdate.toLocaleDateString());
 counts[tweetdate.toLocaleDateString()] = (counts[tweetdate.toLocaleDateString()] || 0) + 1;
 
-  arr.push({user:data.input1, date:tweetdate.toLocaleDateString(), count: counts[tweetdate.toLocaleDateString()]});
+  arr1.push({user:data.input1, date:tweetdate.toLocaleDateString(), count: counts[tweetdate.toLocaleDateString()]});
 });
-		console.log(arr);
-		tweetArray=arr;
-   		//console.log(datatwit);
-   		//console.log('------error section------');
-   		//console.log(err);
-   		//console.log(response);
-
-   	});
-
-
- T.get('statuses/user_timeline', {screen_name: data.input2, count: 100, trim_user: true ,exclude_replies: true, include_rts: false}, function(err, datatwit, response) {
+		//console.log(arr1);
+	//	tweetArray=arr;
 
 var counts1 = {};
-var Arr1 = [];
-datatwit.forEach(function(element) {
+var arr2 =datatwit1;
+
+arr2.forEach(function(element) {
 var ele1 = element.created_at.toString();
 var splitted1 = ele1.split(' ');
 var textdate1 = splitted1[2]+'/'+splitted1[1]+'/'+splitted1[5];
@@ -210,30 +200,26 @@ var tweetdate1 = new Date(textdate1);
 //console.log(tweetdate.toLocaleDateString());
 counts1[tweetdate1.toLocaleDateString()] = (counts1[tweetdate1.toLocaleDateString()] || 0) + 1;
 
-  Arr1.push({user:data.input2, date:tweetdate1.toLocaleDateString(), count: counts1[tweetdate1.toLocaleDateString()]});
-});
-		
-		console.log(Arr1);
-	//tweetArray = Arr1;
-   		//console.log(datatwit);
-   		//console.log('------error section------');
-   		//console.log(err);
-   		//console.log(response);
-
+  arr3.push({user:data.input2, date:tweetdate1.toLocaleDateString(), count: counts1[tweetdate1.toLocaleDateString()]});
+});	
+		//console.log(arr3);
+	tweetArray = arr1.concat(arr3);
+//console.log(arr1);
+//console.log(arr3);
+console.log(tweetArray);
+//io.emit('getTweets',tweetArray);
+ return callback(tweetArray);
    	});
 
 
+   	});
 
-  	//T.get('search/tweets', { q: 'from: ChicoCastilloDL', count: 100 }, function(err, datarrr, response) {
-//console.log(datarrr);
-//});
-//tweetArray = arr.concat(Arr1);
-//console.log(Arr1);
-//console.log(arr);
-console.log(tweetArray);
+io.emit('getTweets',tweetArray);
+   });
 
-return tweetArray;
-}
+   
+
+});
 
 	//app.listen(config.port)
     app.io= io;

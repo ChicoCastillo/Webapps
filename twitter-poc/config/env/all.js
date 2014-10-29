@@ -28,6 +28,8 @@ module.exports = {
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
 				'public/lib/socket.io-client/socket.io.js',
 				'public/lib/angular-socket-io/socket.js',
+				'public/lib/d3/d3.js',
+				'public/lib/d3/de.min.js',
 			]
 		},
 		css: [
